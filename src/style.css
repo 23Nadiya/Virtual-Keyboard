@@ -1,0 +1,25 @@
+* {
+  padding: 0px;
+  margin: 0px;
+  box-sizing: border-box;
+}
+
+.wrapper {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.keyboard {
+  border-radius: 8px;
+  padding: 20px;
+  width: 830px;
+  height: max-content;
+  background-color: #698e6d;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  /* box-shadow: 0 19px 38px rgba(0, 0, 0, 0.3), 0 15px 12px rgba(0, 0, 0, 0.22);*/
+}
