@@ -23,6 +23,7 @@ body {
   left: 10px;
   top: 100px;
   text-align: center;
+  font-size: 18px;
   background-color: #e1dbd1;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
@@ -102,6 +103,10 @@ textarea {
 
 .arrow {
   background-color: #768e72;
+}
+
+.active-key {
+  background-color: #605b4a;
 }
 
 .ch-dwidth {
