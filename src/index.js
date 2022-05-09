@@ -7,7 +7,6 @@ class Keyboard {
       text: null,
       keyboard: null,
       keysCountainer: null,
-      codes: null,
       keys: [],
     };
 
@@ -18,9 +17,15 @@ class Keyboard {
 
     this.propert = {
       value: '',
+      shift: false,
       capsLock: false,
       lang: localStorage.getItem('lang'),
     };
+
+    this.shiftRowSym = ['~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+'];
+    this.shiftRow = ['ё', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '='];
+    // prettier-ignore
+    this.codes = ['Backquote', 'Digit1', 'Digit2', 'Digit3', 'Digit4', 'Digit5', 'Digit6', 'Digit7', 'Digit8', 'Digit9', 'Digit0', 'Minus', 'Equal', 'Backspace', 'Tab', 'KeyQ', 'KeyW', 'KeyE', 'KeyR', 'KeyT', 'KeyY', 'KeyU', 'KeyI', 'KeyO', 'KeyP', 'BracketLeft', 'BracketRight', 'Delete', 'CapsLock', 'KeyA', 'KeyS', 'KeyD', 'KeyF', 'KeyG', 'KeyH', 'KeyJ', 'KeyK', 'KeyL', 'Semicolon', 'Quote', 'Enter', 'Done', 'ShiftLeft', 'KeyZ', 'KeyX', 'KeyC', 'KeyV', 'KeyB', 'KeyN', 'KeyM', 'Comma', 'Period', 'Slash', 'ArrowUp', 'ShiftRight', 'ControlLeft', 'Win', 'AltLeft', 'Space', 'AltRight', 'ControlRight', 'Home', 'ArrowLeft', 'ArrowDown', 'ArrowRight'];
   }
 
   init() {
@@ -79,9 +84,6 @@ class Keyboard {
       'ctrl', 'win', 'alt', 'space', 'alt', 'ctrl', 'home', '←', '↓', '→',
     ];
 
-    // prettier-ignore
-    this.codes = ['Backquote', 'Digit1', 'Digit2', 'Digit3', 'Digit4', 'Digit5', 'Digit6', 'Digit7', 'Digit8', 'Digit9', 'Digit0', 'Minus', 'Equal', 'Backspace', 'Tab', 'KeyQ', 'KeyW', 'KeyE', 'KeyR', 'KeyT', 'KeyY', 'KeyU', 'KeyI', 'KeyO', 'KeyP', 'BracketLeft', 'BracketRight', 'Delete', 'CapsLock', 'KeyA', 'KeyS', 'KeyD', 'KeyF', 'KeyG', 'KeyH', 'KeyJ', 'KeyK', 'KeyL', 'Semicolon', 'Quote', 'Enter', 'Done', 'ShiftLeft', 'KeyZ', 'KeyX', 'KeyC', 'KeyV', 'KeyB', 'KeyN', 'KeyM', 'Comma', 'Period', 'Slash', 'ArrowUp', 'ShiftRight', 'ControlLeft', 'Win', 'AltLeft', 'Space', 'AltRight', 'ControlRight', 'Home', 'ArrowLeft', 'ArrowDown', 'ArrowRight'];
-
     // Creates HTML for an icon
     const createIconHTML = (iconName) => `<i class="material-icons">${iconName}</i>`;
 
@@ -90,6 +92,7 @@ class Keyboard {
 
       keyElement.classList.add('key');
       keyElement.setAttribute('type', 'button');
+
       keyElement.dataset.code = this.codes[keysLayout.indexOf(key, i)];
 
       const insertLineBreak = ['backspace', 'delete', 'enter', 'rshift'].indexOf(key) !== -1;
@@ -102,6 +105,8 @@ class Keyboard {
         case 'shift':
           keyElement.classList.add('function-key');
           keyElement.innerHTML = 'shift';
+
+          this.pressedShift();
           break;
 
         case 'backspace':
@@ -119,7 +124,10 @@ class Keyboard {
           keyElement.classList.add('delete');
           keyElement.innerHTML = 'delete';
           keyElement.addEventListener('click', () => {
-            this.propert.value = this.propert.value.substring(0, 0);
+            const cursorEnd = this.elements.text.selectionEnd;
+            const arr = this.propert.value.split('');
+            arr.splice(cursorEnd, 1);
+            this.propert.value = arr.join('');
             this.triggerEvent('oninput');
           });
           break;
@@ -200,6 +208,7 @@ class Keyboard {
           keyElement.innerHTML = 'rshift';
           keyElement.addEventListener('click', () => {
             this.propert.value += '';
+            this.pressedShift();
             this.triggerEvent('oninput');
           });
           break;
@@ -274,10 +283,48 @@ class Keyboard {
     localStorage.setItem('lang', this.propert.lang);
   }
 
+  pressedShift() {
+    this.propert.shift = true;
+
+    // keys.forEach((elem) => {
+    //   if (this.propert.lang === 'en') {
+    //     switch (elem.dataset.code) {
+    //       case 'BracketLeft':
+    //         textContent = '{';
+    //         break;
+    //       case 'BracketRight':
+    //         textContent = '}';
+    //         break;
+    //       case 'Semicolon':
+    //         textContent = ':';
+    //         break;
+    //       case 'Quote':
+    //         textContent = '"';
+    //         break;
+    //       case 'Comma':
+    //         textContent = '<';
+    //         break;
+    //       case 'Period':
+    //         textContent = '>';
+    //         break;
+    //       case 'Slash':
+    //         textContent = '?';
+    //         break;
+    //       default:
+    //         textContent = ',';
+    //         break;
+    //     }
+    //   }
+    // });
+  }
+
+  unpressedShift() {
+    this.propert.shift = false;
+  }
+
   triggerEvent(handlerName) {
     if (typeof this.eventHandlers[handlerName] === 'object') {
       this.elements.text.value = this.propert.value;
-      //  console.log('test1', this.propert.value);
     }
   }
 
@@ -312,6 +359,12 @@ window.addEventListener('DOMContentLoaded', () => {
   const newKeyboard = new Keyboard();
   newKeyboard.init();
 
+  document.addEventListener('mouseup', () => {
+    if (newKeyboard.propert.shift) {
+      newKeyboard.unpressedShift();
+    }
+  });
+
   window.addEventListener('keydown', (event) => {
     const keysVirt = document.querySelectorAll('.key');
     const dataAttrs = document.querySelectorAll('[data-code]');
@@ -319,6 +372,16 @@ window.addEventListener('DOMContentLoaded', () => {
 
     const key = event.code;
     textareaEl[0].focus();
+
+    if (key === 'Delete') {
+      const cursorEnd = newKeyboard.elements.text.selectionEnd;
+      const arr = newKeyboard.propert.value.split('');
+      arr.splice(cursorEnd, 1);
+      newKeyboard.propert.value = arr.join('');
+      newKeyboard.triggerEvent('oninput');
+    } else if (key === 'Enter') {
+      newKeyboard.propert.value += '\n';
+    }
 
     if (event.shiftKey && event.altKey) {
       if (newKeyboard.propert.lang === 'en') {
@@ -354,16 +417,6 @@ window.addEventListener('DOMContentLoaded', () => {
       if (elem.dataset.code === key) {
         keysVirt[i].classList.add('active-key');
 
-        switch (elem.dataset.code) {
-          case 'Backspace':
-            // prettier-ignore
-            // newKeyboard.propert.value = newKeyboard.propert.value.length - 1;
-            break;
-
-          default:
-            break;
-        }
-
         if (keysVirt[i].textContent.length === 1) {
           newKeyboard.propert.value += keysVirt[i].textContent;
         }
@@ -372,5 +425,11 @@ window.addEventListener('DOMContentLoaded', () => {
         }, 300);
       }
     });
+  });
+
+  window.addEventListener('keyup', (event) => {
+    if (event.key === 'Shift') {
+      newKeyboard.unpressedShift();
+    }
   });
 });
