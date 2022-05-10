@@ -285,37 +285,6 @@ class Keyboard {
 
   pressedShift() {
     this.propert.shift = true;
-
-    // keys.forEach((elem) => {
-    //   if (this.propert.lang === 'en') {
-    //     switch (elem.dataset.code) {
-    //       case 'BracketLeft':
-    //         textContent = '{';
-    //         break;
-    //       case 'BracketRight':
-    //         textContent = '}';
-    //         break;
-    //       case 'Semicolon':
-    //         textContent = ':';
-    //         break;
-    //       case 'Quote':
-    //         textContent = '"';
-    //         break;
-    //       case 'Comma':
-    //         textContent = '<';
-    //         break;
-    //       case 'Period':
-    //         textContent = '>';
-    //         break;
-    //       case 'Slash':
-    //         textContent = '?';
-    //         break;
-    //       default:
-    //         textContent = ',';
-    //         break;
-    //     }
-    //   }
-    // });
   }
 
   unpressedShift() {
