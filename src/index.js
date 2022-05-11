@@ -4,9 +4,10 @@ class Keyboard {
       main: null,
       description: null,
       textarea: null,
-      text: null,
+      text: '',
       keyboard: null,
       keysCountainer: null,
+      cursorPos: 0,
       keys: [],
     };
 
@@ -294,6 +295,10 @@ class Keyboard {
   triggerEvent(handlerName) {
     if (typeof this.eventHandlers[handlerName] === 'object') {
       this.elements.text.value = this.propert.value;
+      this.elements.cursorPos = this.propert.value.length;
+      // let cursorStart = this.elements.text.selectionStart;
+      // let cursorEnd = this.elements.text.selectionEnd;
+      this.elements.text.focus();
     }
   }
 
